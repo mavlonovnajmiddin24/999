@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<meta name="theme-color" content="#0D1B3E"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="HelperGo"/>
+<meta name="description" content="O'zbekiston uchun avtomobil xizmatlari superappi"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icons/icon-192.png"/>
+<title>HelperGo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0D1B3E;
+  --navy2:#1a3a6e;
+  --orange:#F47B20;
+  --orange2:#e86d10;
+  --bg:#F0F4F8;
+  --card:#ffffff;
+  --text:#0D1B3E;
+  --muted:#6b7c93;
+  --border:#e2e8f0;
+  --green:#16a34a;
+  --green-bg:#dcfce7;
+  --red:#dc2626;
+  --red-bg:#fee2e2;
+  --yellow-bg:#fef9c3;
+  --yellow:#854d0e;
+  --shadow:0 2px 12px rgba(13,27,62,0.08);
+  --shadow-lg:0 8px 32px rgba(13,27,62,0.14);
+  --radius:16px;
+  --radius-sm:10px;
+  --font:'Nunito',sans-serif;
+  --font-body:'Nunito Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:var(--font-body);color:var(--text)}
+#app{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative;overflow:hidden;background:var(--bg)}
+
+/* SCREEN SYSTEM */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);transform:translateX(100%);transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);will-change:transform}
+.screen.active{transform:translateX(0)}
+.screen.prev{transform:translateX(-30%)}
+
+/* STATUS BAR */
+.status-bar{background:var(--navy);height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0}
+.status-time{color:#fff;font-size:14px;font-weight:600;font-family:var(--font)}
+.status-icons{color:rgba(255,255,255,0.8);font-size:13px;display:flex;gap:6px;align-items:center}
+
+/* TOP BAR */
+.topbar{background:var(--navy);padding:14px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.topbar-title{font-size:17px;font-weight:700;color:#fff;flex:1;font-family:var(--font)}
+.back-btn{color:rgba(255,255,255,0.85);font-size:22px;cursor:pointer;padding:4px;line-height:1;font-weight:300}
+.topbar-action{color:rgba(255,255,255,0.7);font-size:18px;cursor:pointer}
+
+/* SCROLL BODY */
+.scroll-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:80px}
+.scroll-body::-webkit-scrollbar{display:none}
+
+/* HERO HEADER */
+.hero-header{background:var(--navy);padding:16px 20px 24px;position:relative;overflow:hidden}
+.hero-header::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:40px;background:var(--bg);border-radius:20px 20px 0 0}
+.logo-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.logo{font-family:var(--font);font-size:24px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.logo span{color:var(--orange)}
+.logo-tagline{font-size:11px;color:rgba(255,255,255,0.5);margin-top:1px;font-weight:400}
+.notif-btn{width:36px;height:36px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--orange);border-radius:50%;border:2px solid var(--navy)}
+.greeting-text{color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:4px}
+.greeting-name{color:#fff;font-size:18px;font-weight:700;font-family:var(--font)}
+.location-tag{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.1);border-radius:20px;padding:4px 10px;font-size:12px;color:rgba(255,255,255,0.8);margin-top:8px;cursor:pointer}
+
+/* SEARCH */
+.search-wrap{padding:20px 20px 0}
+.search-box{background:var(--card);border-radius:14px;display:flex;align-items:center;gap:10px;padding:12px 16px;box-shadow:var(--shadow);cursor:pointer}
+.search-box span{color:var(--muted);font-size:14px;flex:1}
+.search-icon-wrap{width:30px;height:30px;background:var(--orange);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+
+/* SOS BUTTON */
+.sos-banner{margin:16px 20px 0;background:linear-gradient(135deg,var(--red),#b91c1c);border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:0 4px 16px rgba(220,38,38,0.25)}
+.sos-circle{width:44px;height:44px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;font-family:var(--font);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,0.3)}50%{box-shadow:0 0 0 8px rgba(255,255,255,0)}}
+.sos-text h4{color:#fff;font-size:14px;font-weight:700;font-family:var(--font)}
+.sos-text p{color:rgba(255,255,255,0.8);font-size:11px;margin-top:2px}
+
+/* CAR CARD */
+.car-card{margin:12px 20px 0;background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--radius);padding:16px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--shadow-lg)}
+.car-info h3{color:#fff;font-size:15px;font-weight:700;font-family:var(--font)}
+.car-info p{color:rgba(255,255,255,0.55);font-size:12px;margin-top:3px}
+.car-badge{background:var(--orange);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;margin-top:8px;display:inline-block;font-family:var(--font)}
+.car-emoji{font-size:44px;margin-left:auto}
+.car-km{color:rgba(255,255,255,0.4);font-size:11px;margin-top:2px}
+
+/* SECTION */
+.section{padding:20px 20px 0}
+.section-label{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;font-family:var(--font)}
+
+/* SERVICE GRID */
+.svc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.svc-btn{background:var(--card);border-radius:var(--radius-sm);padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;box-shadow:var(--shadow);border:1.5px solid transparent;transition:all 0.18s;active:scale(0.96)}
+.svc-btn:active{transform:scale(0.94);border-color:var(--orange)}
+.svc-emoji{font-size:24px}
+.svc-name{font-size:10px;font-weight:600;color:var(--muted);text-align:center;line-height:1.3;font-family:var(--font)}
+
+/* NEARBY CARDS */
+.nearby-card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);cursor:pointer;border:1.5px solid transparent;transition:border-color 0.15s}
+.nearby-card:active{border-color:var(--orange)}
+.nearby-avatar{width:46px;height:46px;border-radius:12px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.nearby-info{flex:1;min-width:0}
+.nearby-info h4{font-size:13px;font-weight:700;font-family:var(--font);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nearby-info p{font-size:11px;color:var(--muted);margin-top:2px}
+.nearby-right{text-align:right;flex-shrink:0}
+.nearby-price{font-size:13px;font-weight:700;color:var(--orange);font-family:var(--font)}
+.nearby-dist{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;font-family:var(--font)}
+.badge.green{background:var(--green-bg);color:var(--green)}
+.badge.yellow{background:var(--yellow-bg);color:var(--yellow)}
+.badge.navy{background:rgba(13,27,62,0.08);color:var(--navy)}
+
+/* BOTTOM NAV */
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:100;box-shadow:0 -4px 20px rgba(13,27,62,0.07)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 2px;transition:transform 0.15s}
+.nav-item:active{transform:scale(0.88)}
+.nav-emoji{font-size:20px;transition:transform 0.2s}
+.nav-label{font-size:9px;color:var(--muted);font-weight:600;font-family:var(--font);transition:color 0.2s}
+.nav-item.active .nav-label{color:var(--orange)}
+
+/* FILTER ROW */
+.filter-row{display:flex;gap:8px;overflow-x:auto;padding:0 20px 4px;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.chip{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--border);cursor:pointer;white-space:nowrap;background:var(--card);color:var(--muted);font-family:var(--font);transition:all 0.15s;flex-shrink:0}
+.chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* MAP */
+.map-box{margin:16px 20px 0;background:var(--card);border-radius:var(--radius);height:170px;overflow:hidden;position:relative;box-shadow:var(--shadow)}
+.map-grid{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,rgba(13,27,62,0.04) 0,rgba(13,27,62,0.04) 1px,transparent 1px,transparent 36px),repeating-linear-gradient(90deg,rgba(13,27,62,0.04) 0,rgba(13,27,62,0.04) 1px,transparent 1px,transparent 36px)}
+.map-roads{position:absolute;inset:0}
+.map-label{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(13,27,62,0.75);color:#fff;font-size:11px;padding:5px 12px;border-radius:20px;font-weight:600;font-family:var(--font);white-space:nowrap}
+.map-pin{position:absolute;font-size:26px;transform:translate(-50%,-100%)}
+
+/* SERVIS LIST ITEM */
+.servis-item{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;display:flex;gap:12px;box-shadow:var(--shadow);cursor:pointer;border:1.5px solid transparent;transition:all 0.15s}
+.servis-item:active{border-color:var(--orange);transform:scale(0.99)}
+.servis-avatar{width:48px;height:48px;border-radius:12px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.servis-info{flex:1;min-width:0}
+.servis-info h4{font-size:13px;font-weight:700;font-family:var(--font)}
+.servis-info p{font-size:11px;color:var(--muted);margin-top:2px}
+.servis-meta{text-align:right;flex-shrink:0}
+.stars{font-size:11px;color:var(--orange);font-weight:700}
+.dist{font-size:11px;color:var(--muted);margin-top:2px}
+.s-price{font-size:13px;font-weight:700;color:var(--navy);margin-top:4px;font-family:var(--font)}
+
+/* INPUT */
+.field-label{font-size:12px;font-weight:700;color:var(--muted);font-family:var(--font);margin-bottom:6px;margin-top:14px;display:block;text-transform:uppercase;letter-spacing:0.4px}
+.field{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-family:var(--font-body);background:var(--card);color:var(--text);outline:none;transition:border-color 0.15s}
+.field:focus{border-color:var(--navy)}
+select.field{cursor:pointer}
+textarea.field{resize:none}
+
+/* DATE SLOTS */
+.date-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:4px}
+.date-cell{text-align:center;padding:10px 4px;border-radius:10px;border:1.5px solid var(--border);cursor:pointer;background:var(--card);transition:all 0.15s}
+.date-cell.sel{background:var(--navy);border-color:var(--navy)}
+.date-day{font-size:13px;font-weight:700;font-family:var(--font);color:var(--text)}
+.date-cell.sel .date-day{color:#fff}
+.date-wd{font-size:10px;color:var(--muted);font-family:var(--font)}
+.date-cell.sel .date-wd{color:rgba(255,255,255,0.65)}
+
+/* TIME SLOTS */
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.time-slot{padding:10px;text-align:center;border-radius:10px;border:1.5px solid var(--border);font-size:13px;font-weight:600;cursor:pointer;background:var(--card);color:var(--text);font-family:var(--font);transition:all 0.15s}
+.time-slot.sel{background:var(--orange);border-color:var(--orange);color:#fff}
+.time-slot.full{opacity:0.35;cursor:not-allowed;background:var(--bg)}
+
+/* PAY */
+.pay-option{display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border-radius:var(--radius-sm);border:1.5px solid var(--border);cursor:pointer;margin-bottom:8px;transition:all 0.15s}
+.pay-option.sel{border-color:var(--orange);background:#fff9f5}
+.pay-logo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.pay-info{flex:1}
+.pay-name{font-size:14px;font-weight:700;font-family:var(--font)}
+.pay-sub{font-size:11px;color:var(--muted)}
+.pay-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;transition:all 0.15s}
+.pay-option.sel .pay-check{background:var(--orange);border-color:var(--orange)}
+
+/* TOTAL */
+.total-box{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.total-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.total-row:last-child{border:none;padding-top:12px}
+.total-lbl{font-size:13px;color:var(--muted)}
+.total-val{font-size:13px;font-weight:600;font-family:var(--font)}
+.total-row.grand .total-lbl{font-size:15px;font-weight:700;color:var(--text);font-family:var(--font)}
+.total-row.grand .total-val{font-size:16px;font-weight:800;color:var(--orange);font-family:var(--font)}
+.discount{color:var(--green)}
+
+/* BUTTONS */
+.btn{width:100%;padding:15px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all 0.15s;letter-spacing:0.2px}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange2)}
+.btn-outline{background:transparent;color:var(--navy);border:2px solid var(--navy);margin-top:8px}
+.btn-red{background:var(--red);color:#fff}
+
+/* SUCCESS */
+.success-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
+.success-icon{width:90px;height:90px;background:var(--green-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;margin:0 auto 20px;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+.success-title{font-size:22px;font-weight:800;font-family:var(--font);margin-bottom:8px}
+.success-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.5}
+.booking-summary{background:var(--bg);border-radius:var(--radius-sm);padding:16px;text-align:left;width:100%;margin-bottom:24px}
+.bs-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
+.bs-lbl{color:var(--muted)}
+.bs-val{font-weight:600;font-family:var(--font)}
+.bs-val.orange{color:var(--orange)}
+.bs-val.green{color:var(--green)}
+
+/* HISTORY */
+.hist-item{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;display:flex;gap:12px;box-shadow:var(--shadow);cursor:pointer}
+.hist-icon{width:44px;height:44px;border-radius:12px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.hist-info{flex:1}
+.hist-info h4{font-size:13px;font-weight:700;font-family:var(--font)}
+.hist-info p{font-size:11px;color:var(--muted);margin-top:2px}
+.hist-meta{text-align:right}
+.hist-status{font-size:11px;font-weight:600}
+.hist-status.ok{color:var(--green)}
+.hist-price{font-size:13px;font-weight:700;font-family:var(--font);margin-top:4px}
+
+/* PARTS GRID */
+.parts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.part-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);cursor:pointer;border:1.5px solid transparent;transition:all 0.15s}
+.part-card:active{border-color:var(--orange);transform:scale(0.97)}
+.part-emoji{font-size:30px;margin-bottom:10px}
+.part-name{font-size:12px;font-weight:700;font-family:var(--font);color:var(--text);line-height:1.3}
+.part-price{font-size:14px;font-weight:800;color:var(--orange);margin-top:6px;font-family:var(--font)}
+.part-seller{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* FUEL */
+.fuel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fuel-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow)}
+.fuel-type{font-size:12px;font-weight:700;color:var(--muted);font-family:var(--font);margin-bottom:6px}
+.fuel-price{font-size:20px;font-weight:800;color:var(--orange);font-family:var(--font)}
+.fuel-change{font-size:11px;font-weight:600;margin-top:3px}
+.fuel-change.up{color:var(--red)}
+.fuel-change.down{color:var(--green)}
+.fuel-change.same{color:var(--muted)}
+
+/* SOS SCREEN */
+.sos-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px 0}
+.sos-action{border-radius:var(--radius);padding:18px;text-align:center;cursor:pointer;transition:transform 0.15s}
+.sos-action:active{transform:scale(0.94)}
+.sos-action-icon{font-size:32px;margin-bottom:10px}
+.sos-action-name{font-size:13px;font-weight:700;color:#fff;font-family:var(--font)}
+.sos-action-time{font-size:11px;color:rgba(255,255,255,0.7);margin-top:3px}
+
+/* PROFILE */
+.profile-hero{background:var(--navy);padding:24px 20px 28px;position:relative}
+.profile-hero::after{content:'';position:absolute;bottom:-16px;left:0;right:0;height:32px;background:var(--bg);border-radius:20px 20px 0 0}
+.avatar{width:68px;height:68px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;font-family:var(--font);border:3px solid rgba(255,255,255,0.2)}
+.p-name{color:#fff;font-size:19px;font-weight:800;font-family:var(--font);margin-top:12px}
+.p-phone{color:rgba(255,255,255,0.55);font-size:13px;margin-top:3px}
+.p-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(244,123,32,0.2);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--orange);margin-top:10px;font-family:var(--font)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);background:var(--card);border-bottom:1px solid var(--border)}
+.stat-cell{padding:16px;text-align:center;border-right:1px solid var(--border)}
+.stat-cell:last-child{border:none}
+.stat-val{font-size:20px;font-weight:800;color:var(--orange);font-family:var(--font)}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:3px;font-weight:600;font-family:var(--font)}
+.menu-list{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-top:16px}
+.menu-item{display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s}
+.menu-item:last-child{border:none}
+.menu-item:active{background:var(--bg)}
+.menu-icon-wrap{width:36px;height:36px;border-radius:10px;background:rgba(13,27,62,0.06);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.menu-text{flex:1;font-size:14px;font-weight:600;font-family:var(--font)}
+.menu-arrow{color:var(--muted);font-size:18px;font-weight:300}
+
+/* TRACKING */
+.driver-card{background:var(--card);border-radius:var(--radius);padding:16px;margin:0 20px;box-shadow:var(--shadow-lg)}
+.driver-info{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.driver-avatar{width:52px;height:52px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.driver-name{font-size:15px;font-weight:700;font-family:var(--font)}
+.driver-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.driver-actions{display:flex;gap:8px;margin-left:auto}
+.driver-btn{width:40px;height:40px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all 0.15s}
+.driver-btn:active{background:var(--orange);border-color:var(--orange)}
+.progress-wrap{margin-bottom:14px}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+.progress-lbl{color:var(--muted);font-weight:600;font-family:var(--font)}
+.progress-val{color:var(--navy);font-weight:700;font-family:var(--font)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--orange);border-radius:3px;animation:fill 1s ease forwards}
+@keyframes fill{from{width:0}to{width:65%}}
+.eta-tag{background:var(--green-bg);color:var(--green);font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;text-align:center;font-family:var(--font)}
+
+/* CAR DETAIL */
+.car-detail-hero{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--radius);margin:16px 20px 0;padding:20px;text-align:center;box-shadow:var(--shadow-lg)}
+.car-big-emoji{font-size:64px;margin-bottom:8px}
+.car-d-name{color:#fff;font-size:20px;font-weight:800;font-family:var(--font)}
+.car-d-plate{background:rgba(255,255,255,0.12);display:inline-block;color:rgba(255,255,255,0.75);font-size:13px;padding:4px 12px;border-radius:8px;margin-top:6px;font-family:var(--font);font-weight:600;letter-spacing:1px}
+.km-row{display:flex;justify-content:center;gap:24px;margin-top:14px}
+.km-item{text-align:center}
+.km-val{color:#fff;font-size:16px;font-weight:800;font-family:var(--font)}
+.km-lbl{color:rgba(255,255,255,0.5);font-size:10px;font-weight:600;margin-top:2px;font-family:var(--font)}
+.service-log-item{background:var(--card);border-radius:var(--radius-sm);padding:14px;margin-bottom:8px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
+.log-icon{font-size:20px;width:36px;text-align:center}
+.log-info h4{font-size:13px;font-weight:700;font-family:var(--font)}
+.log-info p{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;font-size:13px;font-weight:600;padding:10px 20px;border-radius:20px;font-family:var(--font);opacity:0;transition:all 0.3s;z-index:999;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* INSTALL BANNER */
+.install-banner{background:linear-gradient(135deg,var(--navy),var(--navy2));margin:12px 20px 0;border-radius:var(--radius-sm);padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.install-banner h5{color:#fff;font-size:13px;font-weight:700;font-family:var(--font)}
+.install-banner p{color:rgba(255,255,255,0.65);font-size:11px;margin-top:2px}
+.install-btn-sm{background:var(--orange);color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;white-space:nowrap;font-family:var(--font)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== SCREEN: HOME ===== -->
+<div class="screen active" id="s-home">
+  <div class="hero-header">
+    <div class="logo-row">
+      <div>
+        <div class="logo">Helper<span>Go</span></div>
+        <div class="logo-tagline">Avtomobil xizmatlari superappi</div>
+      </div>
+      <div class="notif-btn" onclick="showToast('2 ta yangi bildirishnoma')">
+        <span style="font-size:18px">🔔</span>
+        <div class="notif-dot"></div>
+      </div>
+    </div>
+    <div class="greeting-text">Xayrli kun, Sherzod 👋</div>
+    <div class="greeting-name">Bugun sizga qanday yordam?</div>
+    <div class="location-tag" onclick="showToast('GPS: Toshkent, Yunusobod')">
+      📍 Toshkent, Yunusobod
+    </div>
+  </div>
+
+  <div class="scroll-body">
+    <div class="search-wrap">
+      <div class="search-box" onclick="go('s-servis')">
+        <span>🔍  Servis, qism yoki usta qidiring...</span>
+        <div class="search-icon-wrap">→</div>
+      </div>
+    </div>
+
+    <div class="sos-banner" onclick="go('s-sos')">
+      <div class="sos-circle">SOS</div>
+      <div class="sos-text">
+        <h4>Favqulodda yordam</h4>
+        <p>Evakuator · Texnik yordam · Akkumulyator</p>
+      </div>
+      <span style="color:#fff;font-size:22px;font-weight:300">›</span>
+    </div>
+
+    <div class="car-card" onclick="go('s-car')">
+      <div>
+        <div class="car-info">
+          <h3>Chevrolet Malibu 2022</h3>
+          <p class="car-km">47 820 km · Oq · 01 A 777 AA</p>
+          <span class="car-badge">📅 Navbat: 14-aprel 11:00</span>
+        </div>
+      </div>
+      <div class="car-emoji">🚗</div>
+    </div>
+
+    <div id="install-banner" class="install-banner" onclick="installApp()">
+      <div style="flex:1">
+        <h5>Ilovani telefonga o'rnating</h5>
+        <p>Tezroq kirish · Oflayn ishlaydi</p>
+      </div>
+      <div class="install-btn-sm">O'rnatish</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Xizmatlar</div>
+      <div class="svc-grid">
+        <div class="svc-btn" onclick="go('s-servis')"><span class="svc-emoji">🔧</span><span class="svc-name">Avto servis</span></div>
+        <div class="svc-btn" onclick="go('s-parts')"><span class="svc-emoji">⚙️</span><span class="svc-name">Ehtiyot qismlar</span></div>
+        <div class="svc-btn" onclick="go('s-fuel')"><span class="svc-emoji">⛽</span><span class="svc-name">Yoqilg'i</span></div>
+        <div class="svc-btn" onclick="go('s-sos')"><span class="svc-emoji">🚛</span><span class="svc-name">Evakuator</span></div>
+        <div class="svc-btn" onclick="showToast('Tez orada...')"><span class="svc-emoji">🛡️</span><span class="svc-name">Sug'urta</span></div>
+        <div class="svc-btn" onclick="showToast('Tez orada...')"><span class="svc-emoji">🔍</span><span class="svc-name">Diagnostika</span></div>
+        <div class="svc-btn" onclick="go('s-history')"><span class="svc-emoji">📋</span><span class="svc-name">Tarix</span></div>
+        <div class="svc-btn" onclick="go('s-profile')"><span class="svc-emoji">👤</span><span class="svc-name">Profil</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Yaqin xizmatlar</div>
+      <div class="nearby-card" onclick="go('s-booking')">
+        <div class="nearby-avatar">🔧</div>
+        <div class="nearby-info">
+          <h4>AutoMax Servis</h4>
+          <p>Yunusobod · ⭐ 4.9 (312) · <span class="badge green" style="font-size:10px">Bo'sh</span></p>
+        </div>
+        <div class="nearby-right">
+          <div class="nearby-price">80 000 so'm</div>
+          <div class="nearby-dist">1.2 km</div>
+        </div>
+      </div>
+      <div class="nearby-card" onclick="go('s-booking')">
+        <div class="nearby-avatar">⚡</div>
+        <div class="nearby-info">
+          <h4>GM Avto Texnik</h4>
+          <p>Mirzo Ulug'bek · ⭐ 4.7 (198) · <span class="badge yellow" style="font-size:10px">30 daq navbat</span></p>
+        </div>
+        <div class="nearby-right">
+          <div class="nearby-price">65 000 so'm</div>
+          <div class="nearby-dist">2.8 km</div>
+        </div>
+      </div>
+      <div class="nearby-card" onclick="go('s-booking')">
+        <div class="nearby-avatar">🏆</div>
+        <div class="nearby-info">
+          <h4>Ravshan Auto</h4>
+          <p>Chilonzor · ⭐ 4.8 (87) · <span class="badge green" style="font-size:10px">Bo'sh</span></p>
+        </div>
+        <div class="nearby-right">
+          <div class="nearby-price">75 000 so'm</div>
+          <div class="nearby-dist">3.5 km</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="go('s-home')"><span class="nav-emoji">🏠</span><span class="nav-label">Bosh</span></div>
+    <div class="nav-item" onclick="go('s-servis')"><span class="nav-emoji">🔧</span><span class="nav-label">Servis</span></div>
+    <div class="nav-item" onclick="go('s-parts')"><span class="nav-emoji">⚙️</span><span class="nav-label">Qismlar</span></div>
+    <div class="nav-item" onclick="go('s-history')"><span class="nav-emoji">📋</span><span class="nav-label">Tarix</span></div>
+    <div class="nav-item" onclick="go('s-profile')"><span class="nav-emoji">👤</span><span class="nav-label">Profil</span></div>
+  </nav>
+</div>
+
+<!-- ===== SCREEN: SERVIS ===== -->
+<div class="screen" id="s-servis">
+  <div class="topbar">
+    <span class="back-btn" onclick="back()">‹</span>
+    <span class="topbar-title">Avtoservislar</span>
+    <span class="topbar-action" onclick="showToast('Xarita rejimi')">🗺️</span>
+  </div>
+
+  <div class="map-box">
+    <div class="map-grid"></div>
+    <div class="map-pin" style="top:55%;left:48%">📍</div>
+    <div class="map-pin" style="top:30%;left:25%;font-size:20px">📌</div>
+    <div class="map-pin" style="top:40%;right:20%;font-size:20px">📌</div>
+    <div class="map-pin" style="bottom:28%;left:35%;font-size:20px">📌</div>
+    <div class="map-label">📍 Yunusobod tumani, Toshkent</div>
+  </div>
+
+  <div class="scroll-body" style="padding-top:12px">
+    <div class="filter-row">
+      <div class="chip active" onclick="setChip(this)">Barchasi</div>
+      <div class="chip" onclick="setChip(this)">Moy almashtirish</div>
+      <div class="chip" onclick="setChip(this)">Tormoz</div>
+      <div class="chip" onclick="setChip(this)">Elektr</div>
+      <div class="chip" onclick="setChip(this)">Shinalar</div>
+      <div class="chip" onclick="setChip(this)">Kuzov</div>
+    </div>
+
+    <div style="padding:12px 20px 0">
+      <div class="servis-item" onclick="go('s-booking')">
+        <div class="servis-avatar">🔧</div>
+        <div class="servis-info">
+          <h4>AutoMax Servis</h4>
+          <p>Yunusobod, 14-mavze · <span class="badge green">Bo'sh</span></p>
+        </div>
+        <div class="servis-meta">
+          <div class="stars">★ 4.9 (312)</div>
+          <div class="dist">1.2 km</div>
+          <div class="s-price">80 000 so'm</div>
+        </div>
+      </div>
+      <div class="servis-item" onclick="go('s-booking')">
+        <div class="servis-avatar">⚡</div>
+        <div class="servis-info">
+          <h4>GM Avto Texnik</h4>
+          <p>Mirzo Ulug'bek, 5-ko'cha · <span class="badge yellow">Navbat 30 daq</span></p>
+        </div>
+        <div class="servis-meta">
+          <div class="stars">★ 4.7 (198)</div>
+          <div class="dist">2.8 km</div>
+          <div class="s-price">65 000 so'm</div>
+        </div>
+      </div>
+      <div class="servis-item" onclick="go('s-booking')">
+        <div class="servis-avatar">🏆</div>
+        <div class="servis-info">
+          <h4>Ravshan Auto</h4>
+          <p>Chilonzor, 9-kvartal · <span class="badge green">Bo'sh</span></p>
+        </div>
+        <div class="servis-meta">
+          <div class="stars">★ 4.8 (87)</div>
+          <div class="dist">3.5 km</div>
+          <div class="s-price">75 000 so'm</div>
+        </div>
+      </div>
+      <div class="servis-item" onclick="go('s-booking')">
+        <div class="servis-avatar">🚘</div>
+        <div class="servis-info">
+          <h4>Nexia Avto Master</h4>
+          <p>Sergeli, Yangi Sergeli · <span class="badge yellow">Navbat 1 soat</span></p>
+        </div>
+        <div class="servis-meta">
+          <div class="stars">★ 4.5 (234)</div>
+          <div class="dist">4.1 km</div>
+          <div class="s-price">55 000 so'm</div>
+        </div>
+      </div>
+      <div class="servis-item" onclick="go('s-booking')">
+        <div class="servis-avatar">🔩</div>
+        <div class="servis-info">
+          <h4>Asilbek Motors</h4>
+          <p>Shayxontohur, Beshyog'och · <span class="badge green">Bo'sh</span></p>
+        </div>
+        <div class="servis-meta">
+          <div class="stars">★ 4.6 (156)</div>
+          <div class="dist">5.0 km</div>
+          <div class="s-price">70 000 so'm</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: BOOKING ===== -->
+<div class="screen" id="s-booking">
+  <div class="topbar">
+    <span class="back-btn" onclick="back()">‹</span>
+    <span class="topbar-title">Navbat olish</span>
+  </div>
+  <div class="scroll-body" style="padding:16px 20px 0">
+    <div style="background:var(--bg);border-radius:var(--radius-sm);padding:14px;margin-bottom:4px;display:flex;align-items:center;gap:12px;border:1.5px solid var(--border)">
+      <div style="font-size:28px">🔧</div>
+      <div>
+        <div style="font-size:14px;font-weight:700;font-family:var(--font)">AutoMax Servis</div>
+        <div style="font-size:12px;color:var(--muted)">Yunusobod, 14-mavze · ★ 4.9</div>
+        <div style="font-size:11px;color:var(--green);margin-top:3px;font-weight:600">✓ Tasdiqlangan HelperGo hamkor</div>
+      </div>
+    </div>
+
+    <label class="field-label">Xizmat turi</label>
+    <select class="field" id="svc-select">
+      <option>Moy va filtr almashtirish — 80 000 so'm</option>
+      <option>Tormoz kolodkasi — 150 000 so'm</option>
+      <option>Motor diagnostikasi — 50 000 so'm</option>
+      <option>Shina muvozanati — 40 000 so'm</option>
+      <option>Konditsioner gazi — 120 000 so'm</option>
+      <option>Akkumulyator almashtirish — 380 000 so'm</option>
+    </select>
+
+    <label class="field-label">Avtomobil</label>
+    <select class="field">
+      <option>🚗  Chevrolet Malibu 2022 · 01 A 777 AA</option>
+      <option>+ Yangi avtomobil qo'shish</option>
+    </select>
+
+    <label class="field-label">Sanani tanlang</label>
+    <div class="date-grid">
+      <div class="date-cell" onclick="pickDate(this)"><div class="date-day">13</div><div class="date-wd">Dush</div></div>
+      <div class="date-cell sel" onclick="pickDate(this)"><div class="date-day">14</div><div class="date-wd">Sesh</div></div>
+      <div class="date-cell" onclick="pickDate(this)"><div class="date-day">15</div><div class="date-wd">Chor</div></div>
+      <div class="date-cell" onclick="pickDate(this)"><div class="date-day">16</div><div class="date-wd">Pay</div></div>
+      <div class="date-cell" onclick="pickDate(this)"><div class="date-day">17</div><div class="date-wd">Jum</div></div>
+    </div>
+
+    <label class="field-label">Vaqtni tanlang</label>
+    <div class="time-grid">
+      <div class="time-slot full">09:00</div>
+      <div class="time-slot full">10:00</div>
+      <div class="time-slot sel" onclick="pickTime(this)">11:00</div>
+      <div class="time-slot" onclick="pickTime(this)">12:00</div>
+      <div class="time-slot full">13:00</div>
+      <div class="time-slot" onclick="pickTime(this)">14:00</div>
+      <div class="time-slot" onclick="pickTime(this)">15:00</div>
+      <div class="time-slot" onclick="pickTime(this)">16:00</div>
+      <div class="time-slot" onclick="pickTime(this)">17:00</div>
+    </div>
+
+    <label class="field-label">Izoh (ixtiyoriy)</label>
+    <textarea class="field" rows="2" placeholder="Muammo haqida qisqacha aytib bering..."></textarea>
+
+    <button class="btn btn-primary" style="margin-top:8px" onclick="go('s-payment')">To'lovga o'tish →</button>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: PAYMENT ===== -->
+<div class="screen" id="s-payment">
+  <div class="topbar">
+    <span class="back-btn" onclick="back()">‹</span>
+    <span class="topbar-title">To'lov</span>
+  </div>
+  <div class="scroll-body" style="padding:16px 20px 0">
+    <div class="section-label" style="margin-top:0">To'lov usulini tanlang</div>
+    <div class="pay-option sel" onclick="pickPay(this)">
+      <div class="pay-logo" style="background:#e0f2fe">💳</div>
+      <div class="pay-info"><div class="pay-name">Click</div><div class="pay-sub">Karta orqali tezkor to'lov</div></div>
+      <div class="pay-check">✓</div>
+    </div>
+    <div class="pay-option" onclick="pickPay(this)">
+      <div class="pay-logo" style="background:#ede9fe">🔵</div>
+      <div class="pay-info"><div class="pay-name">Payme</div><div class="pay-sub">Barcha O'zbek kartalar</div></div>
+      <div class="pay-check"></div>
+    </div>
+    <div class="pay-option" onclick="pickPay(this)">
+      <div class="pay-logo" style="background:#fef3c7">🏦</div>
+      <div class="pay-info"><div class="pay-name">Uzcard</div><div class="pay-sub">Milliy to'lov tizimi</div></div>
+      <div class="pay-check"></div>
+    </div>
+    <div class="pay-option" onclick="pickPay(this)">
+      <div class="pay-logo" style="background:#dcfce7">💵</div>
+      <div class="pay-info"><div class="pay-name">Naqd pul</div><div class="pay-sub">Servisda to'lash</div></div>
+      <div class="pay-check"></div>
+    </div>
+
+    <div class="section-label">To'lov tafsiloti</div>
+    <div class="total-box">
+      <div class="total-row"><span class="total-lbl">Moy almashtirish</span><span class="total-val">80 000 so'm</span></div>
+      <div class="total-row"><span class="total-lbl">Ehtiyot qism (filtr)</span><span class="total-val">25 000 so'm</span></div>
+      <div class="total-row"><span class="total-lbl">HelperGo komissiyasi (3%)</span><span class="total-val">3 150 so'm</span></div>
+      <div class="total-row"><span class="total-lbl">Chegirma (yangi foydalanuvchi 15%)</span><span class="total-val discount">−16 000 so'm</span></div>
+      <div class="total-row grand"><span class="total-lbl">Jami to'lov</span><span class="total-val" style="color:var(--orange)">92 150 so'm</span></div>
+    </div>
+
+    <button class="btn btn-primary" style="margin-top:16px" onclick="go('s-success')">To'lovni tasdiqlash ✓</button>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: SUCCESS ===== -->
+<div class="screen" id="s-success">
+  <div class="topbar">
+    <span class="topbar-title" style="text-align:center">Tasdiqlandi</span>
+  </div>
+  <div class="success-wrap">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Navbat olindi!</div>
+    <div class="success-sub">AutoMax Servisda navbatingiz tasdiqlandi.<br>SMS orqali eslatma yuboriladi.</div>
+    <div class="booking-summary">
+      <div class="bs-row"><span class="bs-lbl">Servis</span><span class="bs-val">AutoMax Servis</span></div>
+      <div class="bs-row"><span class="bs-lbl">Manzil</span><span class="bs-val">Yunusobod, 14-mavze</span></div>
+      <div class="bs-row"><span class="bs-lbl">Sana va vaqt</span><span class="bs-val">14-aprel, 11:00</span></div>
+      <div class="bs-row"><span class="bs-lbl">Xizmat</span><span class="bs-val">Moy almashtirish</span></div>
+      <div class="bs-row"><span class="bs-lbl">To'lov</span><span class="bs-val orange">92 150 so'm</span></div>
+      <div class="bs-row"><span class="bs-lbl">Holat</span><span class="bs-val green">✓ Tasdiqlandi</span></div>
+    </div>
+    <button class="btn btn-primary" onclick="go('s-home')" style="width:100%;margin-bottom:10px">Bosh sahifaga qaytish</button>
+    <button class="btn btn-outline" onclick="go('s-history')" style="width:100%">Buyurtmalar tarixi</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN: PARTS ===== -->
+<div class="screen" id="s-parts">
+  <div class="topbar">
+    <span class="back-btn" onclick="back()">‹</span>
+    <span class="topbar-title">Ehtiyot qismlar</span>
+    <span class="topbar-action" onclick="showToast('Savatcha: 0 mahsulot')">🛒</span>
+  </div>
+  <div class="scroll-body" style="padding:16px 20px 0">
+    <input class="field" placeholder="📷  Rasga oling yoki nom yozing..." style="margin-bottom:12px"/>
+    <div class="filter-row" style="padding:0 0 8px">
+      <div class="chip active" onclick="setChip(this)">Barchasi</div>
+      <div class="chip" onclick="setChip(this)">Dvigatel</div>
+      <div class="chip" onclick="setChip(this)">Tormoz</div>
+      <div class="chip" onclick="setChip(this)">Filtr</div>
+      <div class="chip" onclick="setChip(this)">Asl nusxa</div>
+      <div class="chip" onclick="setChip(this)">Analог</div>
+    </div>
+    <div class="section-label" style="margin-top:4px">Chevrolet Malibu uchun tavsiyalar</div>
+    <div class="parts-grid">
+      <div class="part-card" onclick="addToCart('Moy filtri MANN — 18 500 so\'m')">
+        <div class="part-emoji">🔩</div>
+        <div class="part-name">Moy filtri MANN W712/75</div>
+        <div class="part-price">18 500 so'm</div>
+        <div class="part-seller">GM Spare Parts</div>
+        <div style="margin-top:6px"><span class="badge green">Asl nusxa</span></div>
+      </div>
+      <div class="part-card" onclick="addToCart('Tormoz kolodkasi — 85 000 so\'m')">
+        <div class="part-emoji">🛞</div>
+        <div class="part-name">Tormoz kolodkasi Brembo</div>
+        <div class="part-price">85 000 so'm</div>
+        <div class="part-seller">Autoparts UZ</div>
+        <div style="margin-top:6px"><span class="badge green">Asl nusxa</span></div>
+      </div>
+      <div class="part-card" onclick="addToCart('Akkumulyator 60Ah — 380 000 so\'m')">
+        <div class="part-emoji">🔋</div>
+        <div class="part-name">Akkumulyator 60Ah Mutlu</div>
+        <div class="part-price">380 000 so'm</div>
+        <div class="part-seller">BatPower Toshkent</div>
+        <div style="margin-top:6px"><span class="badge yellow">3 ta qoldi</span></div>
+      </div>
+      <div class="part-card" onclick="addToCart('LED chiroq H7 — 45 000 so\'m')">
+        <div class="part-emoji">💡</div>
+        <div class="part-name">Chiroq LED H7 Philips</div>
+        <div class="part-price">45 000 so'm</div>
+        <div class="part-seller">LightStore UZ</div>
+        <div style="margin-top:6px"><span class="badge green">Mavjud</span></div>
+      </div>
+      <div class="part-card" onclick="addToCart('Termostat — 32 000 so\'m')">
+        <div class="part-emoji">🌡️</div>
+        <div class="part-name">Termostat GM Genuine</div>
+        <div class="part-price">32 000 so'm</div>
+        <div class="part-seller">GM Spare Parts</div>
+        <div style="margin-top:6px"><span class="badge green">Asl nusxa</span></div>
+      </div>
+      <div class="part-card" onclick="addToCart('Shamg'alat x4 — 28 000 so\'m')">
+        <div class="part-emoji">🔌</div>
+        <div class="part-name">Shamg'alat NGK (4 dona)</div>
+        <div class="part-price">28 000 so'm</div>
+        <div class="part-seller">Spark Auto UZ</div>
+        <div style="margin-top:6px"><span class="badge green">Mavjud</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: FUEL ===== -->
+<div class="screen" id="s-fuel">
+  <div class="topbar">
+    <span class="back-btn" onclick="back()">‹</span>
+    <span class="topbar-title">Yoqilg'i va AQS</span>
+  </div>
+  <div class="scroll-body" style="padding:16px 20px 0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="section-label" style="margin:0">Bugungi narxlar</div>
+      <div style="font-size:11px;color:var(--muted);font-weight:600">13 aprel 2026</div>
+    </div>
+    <div class="fuel-grid">
+      <div class="fuel-card"><div class="fuel-type">AI-92</div><div class="fuel-price">8 550 so'm</div><div class="fuel-change down">↓ 50 so'm</div></div>
+      <div class="fuel-card"><div class="fuel-type">AI-95</div><div class="fuel-price">9 200 so'm</div><div class="fuel-change up">↑ 100 so'm</div></div>
+      <div class="fuel-card"><div class="fuel-type">Metan (GAZ)</div><div class="fuel-price">2 100 so'm</div><div class="fuel-change same">O'zgarmadi</div></div>
+      <div class="fuel-card"><div class="fuel-type">Dizel</div><div class="fuel-price">10 800 so'm</div><div class="fuel-change down">↓ 200 so'm</div></div>
+    </div>
+
+    <div class="section-label">Yaqin AQSlar</div>
+    <div class="servis-item" onclick="showToast('Marshrut: Yunusobod AQS — 0.8 km')">
+      <div class="servis-avatar">⛽</div>
+      <div class="servis-info"><h4>Lukoil AQS — Yunusobod</h4><p>Amir Temur ko'ch., 107 · <span class="badge green">24/7</span></p></div>
+      <div class="servis-meta"><div class="dist">0.8 km</div><div class="s-price">8 550 so'm</div></div>
+    </div>
+    <div class="servis-item" onclick="showToast('Marshrut: Uzbekneftegaz AQS')">
+      <div class="servis-avatar">⛽</div>
+      <div class="servis-info"><h4>Uzbekneftegaz AQS</h4><p>Shayxontohur, Taras ko'ch. · <span class="badge green">Ochiq</span></p></div>
+      <div class="servis-meta"><div class="dist">1.4 km</div><div class="s-price">8 550 so'm</div></div>
+    </div>
+    <div class="servis-item" onclick="showToast('Marshrut: Metan AGNS Sergeli')">
+      <div class="servis-avatar">🔵</div>
+      <div class="servis-info"><h4>Metan AGNS — Sergeli</h4><p>Sergeli ko'ch., 45 · <span class="badge yellow">Navbat bor</span></p></div>
+      <div class="servis-meta"><div class="dist">3.2 km</div><div class="s-price">2 100 so'm</div></div>
+    </div>
+    <div class="servis-item" onclick="showToast('Marshrut: IPETRO AQS')">
+      <div class="servis-avatar">⛽</div>
+      <div class="servis-info"><h4>IIPETRO AQS — Bektemir</h4><p>Yangi shahar ko'ch. · <span class="badge green">Ochiq</span></p></div>
+      <div class="servis-meta"><div class="dist">4.5 km</div><div class="s-price">8 500 so'm</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: SOS ===== -->
+<div class="screen" id="s-sos">
+  <div class="topbar" style="background:#7f1d1d">
+    <span class="back-btn" onclick="back()">‹</span>
+    <span class="topbar-title">🆘 Favqulodda yordam</span>
+  </div>
+  <div style="background:#7f1d1d;padding:12px 20px 16px">
+    <div style="background:rgba(255,255,255,0.1);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:14px">📍</span>
+      <span style="color:#fff;font-size:13px;font-weight:600">GPS: Yunusobod, Toshkent</span>
+      <span style="color:rgba(255,255,255,0.6);font-size:11px;margin-left:auto">Aniqlandi</span>
+    </div>
+  </div>
+  <div class="scroll-body" style="padding-top:0;background:var(--bg)">
+    <div class="sos-grid">
+      <div class="sos-action" style="background:var(--navy)" onclick="go('s-evakuator')">
+        <div class="sos-action-icon">🚛</div>
+        <div class="sos-action-name">Evakuator</div>
+        <div class="sos-action-time">10–20 daqiqa</div>
+      </div>
+      <div class="sos-action" style="background:var(--orange)" onclick="showToast('Texnik yordam chaqirildi! 15 daqiqada yetib keladi.')">
+        <div class="sos-action-icon">🔧</div>
+        <div class="sos-action-name">Texnik yordam</div>
+        <div class="sos-action-time">15–25 daqiqa</div>
+      </div>
+      <div class="sos-action" style="background:var(--green)" onclick="showToast('Akkumulyator zaryadlash mashina jo\'natildi!')">
+        <div class="sos-action-icon">🔋</div>
+        <div class="sos-action-name">Akkumulyator</div>
+        <div class="sos-action-time">5–10 daqiqa</div>
+      </div>
+      <div class="sos-action" style="background:#7c3aed" onclick="showToast('Shina almashtirish ustasi yo\'lda!')">
+        <div class="sos-action-icon">🛞</div>
+        <div class="sos-action-name">Shina almashtirish</div>
+        <div class="sos-action-time">20–30 daqiqa</div>
+      </div>
+    </div>
+
+    <div style="padding:16px 20px 0">
+      <label class="field-label">Muammo haqida aytib bering</label>
+      <textarea class="field" rows="2" placeholder="Masalan: dvigatel o'chmayapti, g'ildirak yorilib ketdi..."></textarea>
+      <button class="btn btn-red" onclick="go('s-evakuator')">🚛  Evakuator chaqirish</button>
+
+      <div style="background:var(--card);border-radius:var(--radius);padding:16px;margin-top:12px;box-shadow:var(--shadow)">
+        <div style="font-size:13px;font-weight:700;color:var(--red);font-family:var(--font);margin-bottom:10px">📞 Favqulodda raqamlar</div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--muted)">Tez tibbiy yordam</span><a href="tel:103" style="color:var(--red);font-weight:700;text-decoration:none;font-family:var(--font)">103</a></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--muted)">YPX (yo'l politsiyasi)</span><a href="tel:102" style="color:var(--red);font-weight:700;text-decoration:none;font-family:var(--font)">102</a></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px"><span style="color:var(--muted)">HelperGo yordam markazi</span><a href="tel:1234" style="color:var(--orange);font-weight:700;text-decoration:none;font-family:var(--font)">1234</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: EVAKUATOR ===== -->
+<div class="screen" id="s-evakuator">
+  <div class="topbar">
+    <span class="back-btn" onclick="back()">‹</span>
+    <span class="topbar-title">🚛 Evakuator</span>
+  </div>
+  <div class="scroll-body" style="padding:16px 20px 0">
+    <div style="background:var(--red-bg);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start">
+      <span style="font-size:20px">📍</span>
+      <div>
+        <div style="font-size:13px;font-weight:700;font-family:var(--font)">Joylashuvingiz aniqlandi</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Yunusobod, 14-mavze ko'chasi, Toshkent</div>
+      </div>
+    </div>
+
+    <label class="field-label">Yetkazish manzili</label>
+    <input class="field" placeholder="AutoMax Servis, Yunusobod" style="margin-bottom:14px"/>
+
+    <div class="section-label">Yaqin evakuatorlar</div>
+    <div class="servis-item" onclick="selectEvak(this)" id="evak1" style="border:1.5px solid var(--orange)">
+      <div class="servis-avatar">🚛</div>
+      <div class="servis-info"><h4>Jahongir Rahimov</h4><p>★ 4.9 · 312 buyurtma · Toshkent</p><span class="badge green">Tanlandi</span></div>
+      <div class="servis-meta"><div class="s-price">80 000 so'm</div><div class="dist">~10 daq · 0.6 km</div></div>
+    </div>
+    <div class="servis-item" onclick="selectEvak(this)" id="evak2">
+      <div class="servis-avatar">🚚</div>
+      <div class="servis-info"><h4>AvtoHelp 24/7</h4><p>★ 4.7 · 198 buyurtma · Toshkent</p></div>
+      <div class="servis-meta"><div class="s-price">70 000 so'm</div><div class="dist">~15 daq · 1.2 km</div></div>
+    </div>
+    <div class="servis-item" onclick="selectEvak(this)" id="evak3">
+      <div class="servis-avatar">🏗️</div>
+      <div class="servis-info"><h4>Tez Yetkazish Evak</h4><p>★ 4.6 · 89 buyurtma · Toshkent</p></div>
+      <div class="servis-meta"><div class="s-price">65 000 so'm</div><div class="dist">~20 daq · 2.1 km</div></div>
+    </div>
+
+    <button class="btn btn-primary" onclick="go('s-tracking')">Chaqirish — 80 000 so'm →</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: TRACKING ===== -->
+<div class="screen" id="s-tracking">
+  <div class="topbar">
+    <span class="back-btn" onclick="back()">‹</span>
+    <span class="topbar-title">Kuzatish</span>
+  </div>
+  <div class="scroll-body" style="padding-top:0">
+    <div class="map-box" style="margin:0;border-radius:0;height:220px">
+      <div class="map-grid"></div>
+      <div class="map-pin" style="top:45%;left:50%">📍</div>
+      <div id="truck-pin" class="map-pin" style="top:20%;left:30%;font-size:28px;transition:all 2s">🚛</div>
+      <div class="map-label" id="eta-label">🚛 Evakuator yo'lda · ~6 daqiqa</div>
+    </div>
+
+    <div style="padding:16px 20px 0">
+      <div style="background:var(--green-bg);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:14px;border:1px solid #86efac">
+        <div style="font-size:13px;font-weight:700;color:var(--green);font-family:var(--font)">✓ Evakuator qabul qildi!</div>
+        <div style="font-size:12px;color:var(--green);margin-top:2px">Taxminiy yetib kelish vaqti: 6–10 daqiqa</div>
+      </div>
+
+      <div class="driver-card">
+        <div class="driver-info">
+          <div class="driver-avatar">👨‍🔧</div>
+          <div>
+            <div class="driver-name">Jahongir Rahimov</div>
+            <div class="driver-sub">Haydovchi · ★ 4.9 · 312 bajarilgan</div>
+          </div>
+          <div class="driver-actions">
+            <div class="driver-btn" onclick="showToast('Qo\'ng\'iroq: +998 90 123 45 67')">📞</div>
+            <div class="driver-btn" onclick="showToast('Chat ochildi')">💬</div>
+          </div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span class="progress-lbl">Yo'lda</span>
+            <span class="progress-val">~6 daqiqa qoldi</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill"></div></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">Mashina: <strong style="color:var(--text)">01 K 456 BB · GAZ-3302 (oq)</strong></div>
+        <div class="eta-tag" style="margin-top:12px">Narx: 80 000 so'm · Click orqali to'landi</div>
+      </div>
+
+      <button class="btn btn-outline" style="margin-top:12px" onclick="go('s-home')">← Bosh sahifaga qaytish</button>
+      <div style="height:16px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: HISTORY ===== -->
+<div class="screen" id="s-history">
+  <div class="topbar">
+    <span class="back-btn" onclick="back()">‹</span>
+    <span class="topbar-title">Buyurtmalar tarixi</span>
+  </div>
+  <div class="scroll-body" style="padding:12px 20px 0">
+    <div class="filter-row" style="padding:0 0 12px">
+      <div class="chip active" onclick="setChip(this)">Barchasi</div>
+      <div class="chip" onclick="setChip(this)">Servis</div>
+      <div class="chip" onclick="setChip(this)">Qismlar</div>
+      <div class="chip" onclick="setChip(this)">Evakuator</div>
+    </div>
+
+    <div class="hist-item">
+      <div class="hist-icon">🔧</div>
+      <div class="hist-info"><h4>AutoMax Servis</h4><p>Moy almashtirish · Malibu 2022</p><p style="font-size:10px;margin-top:3px">14-aprel 2026, 11:00</p></div>
+      <div class="hist-meta"><div class="hist-status ok">✓ Tasdiqlandi</div><div class="hist-price">92 150 so'm</div></div>
+    </div>
+    <div class="hist-item">
+      <div class="hist-icon">⚙️</div>
+      <div class="hist-info"><h4>Ehtiyot qism buyurtma</h4><p>Tormoz kolodkasi Brembo × 2</p><p style="font-size:10px;margin-top:3px">28-mart 2026</p></div>
+      <div class="hist-meta"><div class="hist-status ok">✓ Yetkazildi</div><div class="hist-price">170 000 so'm</div></div>
+    </div>
+    <div class="hist-item">
+      <div class="hist-icon">🚛</div>
+      <div class="hist-info"><h4>Evakuator xizmati</h4><p>Yunusobod → Ravshan Auto</p><p style="font-size:10px;margin-top:3px">15-mart 2026</p></div>
+      <div class="hist-meta"><div class="hist-status ok">✓ Bajarildi</div><div class="hist-price">80 000 so'm</div></div>
+    </div>
+    <div class="hist-item">
+      <div class="hist-icon">🔧</div>
+      <div class="hist-info"><h4>GM Avto Texnik</h4><p>Motor diagnostikasi · Malibu 2022</p><p style="font-size:10px;margin-top:3px">2-mart 2026</p></div>
+      <div class="hist-meta"><div class="hist-status ok">✓ Bajarildi</div><div class="hist-price">50 000 so'm</div></div>
+    </div>
+
+    <div style="background:var(--card);border-radius:var(--radius);padding:16px;margin-top:4px;box-shadow:var(--shadow)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:13px;color:var(--muted);font-weight:600">Jami sarflangan</span>
+        <span style="font-size:15px;font-weight:800;color:var(--orange);font-family:var(--font)">392 150 so'm</span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="font-size:13px;color:var(--muted);font-weight:600">Tejagan (chegirmalar)</span>
+        <span style="font-size:15px;font-weight:800;color:var(--green);font-family:var(--font)">48 000 so'm</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: CAR ===== -->
+<div class="screen" id="s-car">
+  <div class="topbar">
+    <span class="back-btn" onclick="back()">‹</span>
+    <span class="topbar-title">Avtomobilim</span>
+    <span class="topbar-action" onclick="showToast('Yangi avtomobil qo\'shildi')">➕</span>
+  </div>
+  <div class="scroll-body" style="padding-bottom:80px">
+    <div class="car-detail-hero">
+      <div class="car-big-emoji">🚗</div>
+      <div class="car-d-name">Chevrolet Malibu 2022</div>
+      <div><div class="car-d-plate">01 A 777 AA</div></div>
+      <div class="km-row">
+        <div class="km-item"><div class="km-val">47 820</div><div class="km-lbl">KM</div></div>
+        <div class="km-item"><div class="km-val">Oq</div><div class="km-lbl">Rang</div></div>
+        <div class="km-item"><div class="km-val">Benzin</div><div class="km-lbl">Yoqilg'i</div></div>
+      </div>
+    </div>
+
+    <div style="padding:16px 20px 0">
+      <div style="background:var(--yellow-bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;display:flex;gap:10px">
+        <span style="font-size:20px">⚠️</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;font-family:var(--font);color:var(--yellow)">Diagnostika tavsiya etiladi</div>
+          <div style="font-size:12px;color:var(--yellow);margin-top:2px">50 000 km da kerak · Hozir: 47 820 km</div>
+        </div>
+      </div>
+
+      <div class="section-label">Raqamli servis kitobi</div>
+      <div class="service-log-item">
+        <div class="log-icon">🛢️</div>
+        <div class="log-info"><h4>Moy almashtirish</h4><p>28-yanvar 2026 · 45 230 km · AutoMax Servis</p></div>
+        <span class="badge green" style="margin-left:auto">✓</span>
+      </div>
+      <div class="service-log-item">
+        <div class="log-icon">🛞</div>
+        <div class="log-info"><h4>Tormoz kolodkasi</h4><p>15-noyabr 2025 · 42 100 km · GM Avto Texnik</p></div>
+        <span class="badge green" style="margin-left:auto">✓</span>
+      </div>
+      <div class="service-log-item">
+        <div class="log-icon">❄️</div>
+        <div class="log-info"><h4>Antifriz almashtirish</h4><p>3-may 2025 · 38 500 km · Ravshan Auto</p></div>
+        <span class="badge green" style="margin-left:auto">✓</span>
+      </div>
+      <div class="service-log-item">
+        <div class="log-icon">🔋</div>
+        <div class="log-info"><h4>Akkumulyator tekshiruvi</h4><p>10-yanvar 2025 · 32 000 km · AutoMax Servis</p></div>
+        <span class="badge green" style="margin-left:auto">✓</span>
+      </div>
+
+      <button class="btn btn-primary" style="margin-top:14px" onclick="go('s-servis')">Servis bron qilish</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: PROFILE ===== -->
+<div class="screen" id="s-profile">
+  <div class="profile-hero">
+    <div class="avatar">SH</div>
+    <div class="p-name">Sherzod Xasanov</div>
+    <div class="p-phone">+998 90 123 45 67</div>
+    <div class="p-badge">⭐ Oltin a'zo</div>
+  </div>
+  <div class="scroll-body" style="padding-bottom:80px">
+    <div class="stats-row" style="margin-top:24px">
+      <div class="stat-cell"><div class="stat-val">4</div><div class="stat-lbl">Buyurtma</div></div>
+      <div class="stat-cell"><div class="stat-val">48K</div><div class="stat-lbl">Tejalgan so'm</div></div>
+      <div class="stat-cell"><div class="stat-val">★ 5.0</div><div class="stat-lbl">Reyting</div></div>
+    </div>
+
+    <div style="padding:16px 20px 0">
+      <div class="menu-list">
+        <div class="menu-item" onclick="go('s-car')"><div class="menu-icon-wrap">🚗</div><span class="menu-text">Avtomobillarim</span><span class="menu-arrow">›</span></div>
+        <div class="menu-item" onclick="go('s-history')"><div class="menu-icon-wrap">📋</div><span class="menu-text">Buyurtmalar tarixi</span><span class="menu-arrow">›</span></div>
+        <div class="menu-item" onclick="showToast('Karta: **** 4521 (Uzcard)')"><div class="menu-icon-wrap">💳</div><span class="menu-text">To'lov usullari (Click, Payme)</span><span class="menu-arrow">›</span></div>
+        <div class="menu-item" onclick="showToast('Bildirishnomalar sozlamalari ochildi')"><div class="menu-icon-wrap">🔔</div><span class="menu-text">Bildirishnomalar</span><span class="menu-arrow">›</span></div>
+        <div class="menu-item" onclick="showToast('Yordam: 1234 | support@helpergo.uz')"><div class="menu-icon-wrap">🆘</div><span class="menu-text">Yordam markazi</span><span class="menu-arrow">›</span></div>
+        <div class="menu-item" onclick="showToast('Bonus: +20 000 so\'m! Do\'stingizga yuborildi')"><div class="menu-icon-wrap">🎁</div><span class="menu-text">Do'stga taklif (20 000 so'm bonus)</span><span class="menu-arrow">›</span></div>
+        <div class="menu-item" onclick="installApp()"><div class="menu-icon-wrap">📲</div><span class="menu-text">Ilovani telefonga o'rnatish</span><span class="menu-arrow">›</span></div>
+      </div>
+
+      <button class="btn btn-outline" style="margin-top:12px" onclick="go('s-home')">Chiqish</button>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item" onclick="go('s-home')"><span class="nav-emoji">🏠</span><span class="nav-label">Bosh</span></div>
+    <div class="nav-item" onclick="go('s-servis')"><span class="nav-emoji">🔧</span><span class="nav-label">Servis</span></div>
+    <div class="nav-item" onclick="go('s-parts')"><span class="nav-emoji">⚙️</span><span class="nav-label">Qismlar</span></div>
+    <div class="nav-item" onclick="go('s-history')"><span class="nav-emoji">📋</span><span class="nav-label">Tarix</span></div>
+    <div class="nav-item active"><span class="nav-emoji">👤</span><span class="nav-label">Profil</span></div>
+  </nav>
+</div>
+
+</div><!-- end #app -->
+
+<script>
+var history_stack = ['s-home'];
+var deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+function go(id){
+  var cur = document.querySelector('.screen.active');
+  var next = document.getElementById(id);
+  if(!next || cur === next) return;
+  cur.classList.add('prev');
+  cur.classList.remove('active');
+  next.classList.add('active');
+  next.querySelector('.scroll-body') && (next.querySelector('.scroll-body').scrollTop = 0);
+  if(history_stack[history_stack.length-1] !== id) history_stack.push(id);
+}
+
+function back(){
+  if(history_stack.length > 1){
+    history_stack.pop();
+    var prev_id = history_stack[history_stack.length-1];
+    var cur = document.querySelector('.screen.active');
+    var prev = document.getElementById(prev_id);
+    if(!prev) return;
+    cur.classList.remove('active');
+    prev.classList.remove('prev');
+    prev.classList.add('active');
+  }
+}
+
+function showToast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2800);
+}
+
+function setChip(el){
+  el.closest('.filter-row').querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function pickDate(el){
+  el.parentElement.querySelectorAll('.date-cell').forEach(function(d){ d.classList.remove('sel'); });
+  el.classList.add('sel');
+}
+
+function pickTime(el){
+  if(el.classList.contains('full')) return;
+  el.closest('.time-grid').querySelectorAll('.time-slot').forEach(function(s){ s.classList.remove('sel'); });
+  el.classList.add('sel');
+}
+
+function pickPay(el){
+  document.querySelectorAll('.pay-option').forEach(function(p){
+    p.classList.remove('sel');
+    p.querySelector('.pay-check').textContent = '';
+  });
+  el.classList.add('sel');
+  el.querySelector('.pay-check').textContent = '✓';
+}
+
+var cartCount = 0;
+function addToCart(item){
+  cartCount++;
+  showToast('✓ Savatchaga qo\'shildi: ' + item);
+}
+
+function selectEvak(el){
+  document.querySelectorAll('.servis-item').forEach(function(s){
+    s.style.borderColor = 'transparent';
+    var b = s.querySelector('.badge.green');
+    if(b && b.textContent === 'Tanlandi') b.remove();
+  });
+  el.style.borderColor = 'var(--orange)';
+  var h4 = el.querySelector('h4');
+  if(!el.querySelector('.badge.green')){
+    var badge = document.createElement('span');
+    badge.className = 'badge green';
+    badge.textContent = 'Tanlandi';
+    el.querySelector('.servis-info').appendChild(badge);
+  }
+}
+
+function installApp(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(r){
+      if(r.outcome === 'accepted') showToast('HelperGo o\'rnatildi!');
+      deferredPrompt = null;
+      document.getElementById('install-banner').style.display = 'none';
+    });
+  } else {
+    showToast('Brauzer menyusidan: "Bosh ekranga qo\'shish" tugmasini bosing');
+  }
+}
+
+// Truck animation on tracking screen
+setInterval(function(){
+  var pin = document.getElementById('truck-pin');
+  if(pin && document.getElementById('s-tracking').classList.contains('active')){
+    var t = parseInt(pin.style.top) || 20;
+    var l = parseInt(pin.style.left) || 30;
+    pin.style.top = Math.min(t + 2, 42) + '%';
+    pin.style.left = Math.min(l + 3, 47) + '%';
+  }
+}, 1500);
+
+// Clock
+function updateClock(){
+  var els = document.querySelectorAll('.status-time');
+  var now = new Date();
+  var h = now.getHours().toString().padStart(2,'0');
+  var m = now.getMinutes().toString().padStart(2,'0');
+  els.forEach(function(e){ e.textContent = h + ':' + m; });
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+// Service Worker registration
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>
